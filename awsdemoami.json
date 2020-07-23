@@ -1,0 +1,38 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": ""
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "us-east-1",
+      "source_ami": "ami-00068cd7555f543d5",
+      "instance_type": "t2.micro",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ami_name":  "mavericklinux",
+	  "tags":{
+		"Name": "maverick - {{timestamp}}"
+	  }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sudo yum update -y",
+        "sudo amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2",
+        "sudo yum install -y httpd mariadb-server",
+        "sudo systemctl start httpd",
+        "sudo systemctl enable httpd",
+        "sudo usermod -a -G apache ec2-user",
+        "sudo chown -R ec2-user:apache /var/www",
+        "sudo chmod 2775 /var/www && find /var/www -type d -exec sudo chmod 2775 {} \\;",
+        "find /var/www -type f -exec sudo chmod 0664 {} \\;",
+        "echo \"<?php phpinfo(); ?>\" > /var/www/html/phpinfo.php"
+    ]
+    }
+  ]
+}
