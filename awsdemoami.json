@@ -12,6 +12,7 @@
       "source_ami": "ami-00068cd7555f543d5",
       "instance_type": "t2.micro",
       "ssh_username": "{{user `ssh_username`}}",
+      "temporary_key_pair_type": "ed25519",
       "ami_name":  "mavericklinux",
 	  "tags":{
 		"Name": "maverick - {{timestamp}}"
